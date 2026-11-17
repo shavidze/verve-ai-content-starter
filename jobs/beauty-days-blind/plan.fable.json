@@ -1,0 +1,175 @@
+{
+  "status": "draft",
+  "needs_review": true,
+  "approval_note": "Blind draft made without hearing the audio. Needs a human listen-through, real caption text and recorded approval before the status changes. Do not publish automatically.",
+  "brand_profile": "brands/verve.json",
+  "source": "jobs/beauty-days/raw/c01.mp4",
+  "output": "jobs/beauty-days-blind/output.fable.mp4",
+  "estimated_duration": {
+    "body": 32.75,
+    "end_card": 3.0,
+    "total": 35.75
+  },
+  "segments": [
+    {
+      "source": "jobs/beauty-days/raw/c01.mp4",
+      "start": 0.8,
+      "end": 11.6,
+      "timeline_start": 0.0,
+      "timeline_end": 10.8,
+      "note": "Opening beat. Trim drops a 0.43 s sound at the clip head (unknown: could be a word, breath or click) and the silent tail."
+    },
+    {
+      "source": "jobs/beauty-days/raw/c02.mp4",
+      "start": 0.85,
+      "end": 6.05,
+      "timeline_start": 10.8,
+      "timeline_end": 16.0,
+      "note": "Punch-in 1.08 to disguise same-framing jump cut from c01. Blink near 3.0 s is mid-segment, not on a cut.",
+      "zoom": 1.08
+    },
+    {
+      "source": "jobs/beauty-days/raw/c03.mp4",
+      "start": 0.7,
+      "end": 5.9,
+      "timeline_start": 16.0,
+      "timeline_end": 21.2,
+      "note": "Back to 1.0. Trimmed to the detected speech window plus padding."
+    },
+    {
+      "source": "jobs/beauty-days/raw/c04.mp4",
+      "start": 0.0,
+      "end": 7.95,
+      "timeline_start": 21.2,
+      "timeline_end": 29.15,
+      "note": "Sound starts at 0.0 s, so no head trim (a blink is visible on the first frame). Natively a little tighter; 1.06 keeps the alternation readable.",
+      "zoom": 1.06
+    },
+    {
+      "source": "jobs/beauty-days/raw/c05.mp4",
+      "start": 0.0,
+      "end": 3.6,
+      "timeline_start": 29.15,
+      "timeline_end": 32.75,
+      "note": "Closing beat: ends on the closed-lip smile at about 3 s, then cuts to the end card."
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.1,
+      "end": 3.6,
+      "text": "[ტექსტი 01 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c01, part 1 of 3"
+    },
+    {
+      "start": 3.6,
+      "end": 7.2,
+      "text": "[ტექსტი 02 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c01, part 2 of 3"
+    },
+    {
+      "start": 7.2,
+      "end": 10.65,
+      "text": "[ტექსტი 03 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c01, part 3 of 3"
+    },
+    {
+      "start": 10.9,
+      "end": 13.4,
+      "text": "[ტექსტი 04 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c02, part 1 of 2"
+    },
+    {
+      "start": 13.4,
+      "end": 15.85,
+      "text": "[ტექსტი 05 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c02, part 2 of 2"
+    },
+    {
+      "start": 16.1,
+      "end": 18.6,
+      "text": "[ტექსტი 06 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c03, part 1 of 2"
+    },
+    {
+      "start": 18.6,
+      "end": 21.05,
+      "text": "[ტექსტი 07 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c03, part 2 of 2"
+    },
+    {
+      "start": 21.3,
+      "end": 23.85,
+      "text": "[ტექსტი 08 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c04, part 1 of 3"
+    },
+    {
+      "start": 23.85,
+      "end": 26.5,
+      "text": "[ტექსტი 09 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c04, part 2 of 3"
+    },
+    {
+      "start": 26.5,
+      "end": 29.0,
+      "text": "[ტექსტი 10 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c04, part 3 of 3"
+    },
+    {
+      "start": 29.25,
+      "end": 32.6,
+      "text": "[ტექსტი 11 — ჩასანაცვლებელია]",
+      "placeholder": true,
+      "covers": "c05, part 1 of 1"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 0.3,
+      "end": 3.0,
+      "x": 140,
+      "y": 1190,
+      "w": 800,
+      "h": 140,
+      "text": "[სათაური — ჩასანაცვლებელია]",
+      "background": "#6A6F59",
+      "color": "#F3F1E9",
+      "size": 50,
+      "placeholder": true
+    }
+  ],
+  "end_card": {
+    "duration": 3.0,
+    "background": "#29211B",
+    "logo": "brands/verve/logo/wordmark-latin.png",
+    "logo_tint": "#DCC7AA",
+    "lines": [
+      "რუსთავი, ვახუშტის 6",
+      "+995 511 70 73 00"
+    ],
+    "text_color": "#F3F1E9"
+  },
+  "audio": {
+    "loudnorm": -16
+  },
+  "human_must_supply": [
+    "Listen-through or transcript of c01-c09: language, topic, and whether the clips are sequential parts of one script or alternate takes",
+    "Verified Georgian caption text for each of the 11 placeholder slots (max 7 words each), and corrected caption timings",
+    "Hook title text for the single overlay, or a decision to delete the overlay",
+    "What the small round object in her hand is, and whether it may be shown or named",
+    "Presenter filming consent/release and approval to show the logo wall",
+    "Confirmation that every spoken statement is free of guaranteed-result, zero-risk, medical-advice, review or before/after claims; cut any segment that is not",
+    "Whether the sound in the first 0.43 s of c01 and the first 0.5 s of c02 is speech that must be kept"
+  ],
+  "notes": "All caption and overlay text is placeholder; nothing here transcribes or paraphrases speech. Trim points come from sheet frames plus ffmpeg silencedetect (-35 dB, 0.25 s), which measures level only. Extra keys (timeline_*, note, placeholder, covers, human_must_supply) are ignored by render.py."
+}

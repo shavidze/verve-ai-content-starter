@@ -1,0 +1,57 @@
+{
+  "status": "draft",
+  "approval_note": "DRAFT - needs_review. Blind plan from contact sheets only; no audio heard. All caption and overlay text are PLACEHOLDERS that must be replaced from a verified transcript before approval. Do not change status without a recorded human approval.",
+  "brand_profile": "brands/verve.json",
+  "source": "jobs/beauty-days/raw/c01.mp4",
+  "output": "jobs/beauty-days-blind/output-opus.mp4",
+  "segments": [
+    {"source": "jobs/beauty-days/raw/c01.mp4", "start": 0.0, "end": 12.2, "zoom": 1.0, "note": "opener; longest clean take; full clip kept so speech is not cut mid-sentence"},
+    {"source": "jobs/beauty-days/raw/c02.mp4", "start": 0.0, "end": 7.2, "zoom": 1.06, "note": "punch-in disguises same-framing jump cut from c01; ends on closed-mouth smile ~6 s"},
+    {"source": "jobs/beauty-days/raw/c03.mp4", "start": 0.0, "end": 6.5, "zoom": 1.0, "note": "back to wide; 4.5-6.57 s unseen on sheet - check on preview"},
+    {"source": "jobs/beauty-days/raw/c04.mp4", "start": 0.6, "end": 9.4, "zoom": 1.0, "note": "skip blink at 0 s; c04 is natively a bit tighter so no extra zoom; 7.5-9.44 s unseen"},
+    {"source": "jobs/beauty-days/raw/c05.mp4", "start": 0.0, "end": 4.5, "zoom": 1.06, "note": "closing beat; closed-lip smile ~3 s reads as end of statement"}
+  ],
+  "captions": [
+    {"start": 0.0,  "end": 3.0,  "text": "[PLACEHOLDER c01 #1 - speech unknown]"},
+    {"start": 3.0,  "end": 6.0,  "text": "[PLACEHOLDER c01 #2 - speech unknown]"},
+    {"start": 6.0,  "end": 9.0,  "text": "[PLACEHOLDER c01 #3 - speech unknown]"},
+    {"start": 9.0,  "end": 12.1, "text": "[PLACEHOLDER c01 #4 - speech unknown]"},
+    {"start": 12.2, "end": 15.8, "text": "[PLACEHOLDER c02 #1 - speech unknown]"},
+    {"start": 15.8, "end": 19.3, "text": "[PLACEHOLDER c02 #2 - speech unknown]"},
+    {"start": 19.4, "end": 22.6, "text": "[PLACEHOLDER c03 #1 - speech unknown]"},
+    {"start": 22.6, "end": 25.8, "text": "[PLACEHOLDER c03 #2 - speech unknown]"},
+    {"start": 25.9, "end": 28.8, "text": "[PLACEHOLDER c04 #1 - speech unknown]"},
+    {"start": 28.8, "end": 31.8, "text": "[PLACEHOLDER c04 #2 - speech unknown]"},
+    {"start": 31.8, "end": 34.6, "text": "[PLACEHOLDER c04 #3 - speech unknown]"},
+    {"start": 34.7, "end": 37.0, "text": "[PLACEHOLDER c05 #1 - speech unknown]"},
+    {"start": 37.0, "end": 39.1, "text": "[PLACEHOLDER c05 #2 - speech unknown]"}
+  ],
+  "overlays": [
+    {"start": 0.0, "end": 2.5, "x": 90, "y": 200, "w": 900, "h": 180,
+     "text": "[HOOK TITLE - TBD]", "background": "#6A6F59", "color": "#F3F1E9", "size": 72,
+     "note": "Placed over the logo wall above her head (face starts ~y 520). Smoked Moss / Cream Silk is approved for large text only. Replace with a 2-5 word Georgian hook (mtavruli) taken from what she actually says."}
+  ],
+  "end_card": {
+    "duration": 3.5,
+    "background": "#29211B",
+    "logo": "brands/verve/logo/wordmark-latin.png",
+    "logo_tint": "#DCC7AA",
+    "logo_width": 620,
+    "logo_y": 760,
+    "text_y": 1080,
+    "text_color": "#F3F1E9",
+    "lines": ["რუსთავი, ვახუშტის 6", "+995 511 70 73 00"]
+  },
+  "audio": {"loudnorm": -16},
+  "timeline_estimate_s": {"body": 39.2, "end_card": 3.5, "total": 42.7},
+  "needs_review": [
+    "Transcript of c01-c05 (and c06-c09 if used): exact Georgian wording, split into <=7-word captions aligned to real phrase boundaries; replace every [PLACEHOLDER].",
+    "Hook overlay text (or remove the overlay if the first spoken line already hooks).",
+    "Confirm clip order: assumed c01-c05 are sequential script parts; if they are alternate takes, pick the best take per line instead.",
+    "Confirm trims do not cut words at the unseen tails (c01 >10.5 s, c03 >4.5 s, c04 >7.5 s, c05 >3.0 s).",
+    "Identify the round object she holds and whether any product/claim may be named.",
+    "Presenter consent/release and approval to show the VERVE logo wall.",
+    "Conflict: CLAUDE.md pilot scope is 15-30 s; this brief asks 30-45 s. Human must choose."
+  ],
+  "notes": "Renderer ignores note/needs_review/timeline_estimate_s keys. Preview with: python scripts/render.py jobs/beauty-days-blind/plan.opus.json --preview"
+}

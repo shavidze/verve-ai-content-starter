@@ -1,0 +1,117 @@
+{
+  "status": "draft",
+  "approval_note": "Needs actual human review and recorded approval before changing status. ALL caption/overlay text is placeholder: speech is unknown (blind run, no audio heard).",
+  "brand_profile": "brands/verve.json",
+  "source": "jobs/beauty-days/raw/c01.mp4",
+  "output": "jobs/beauty-days-blind/output.sonnet.mp4",
+  "segments": [
+    {
+      "source": "jobs/beauty-days/raw/c01.mp4",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "source": "jobs/beauty-days/raw/c03.mp4",
+      "start": 0,
+      "end": 4.5,
+      "zoom": 1.07
+    },
+    {
+      "source": "jobs/beauty-days/raw/c09.mp4",
+      "start": 0,
+      "end": 4.5
+    },
+    {
+      "source": "jobs/beauty-days/raw/c04.mp4",
+      "start": 1,
+      "end": 7,
+      "zoom": 1.07
+    },
+    {
+      "source": "jobs/beauty-days/raw/c06.mp4",
+      "start": 1,
+      "end": 6.5
+    },
+    {
+      "source": "jobs/beauty-days/raw/c02.mp4",
+      "start": 0,
+      "end": 5.5,
+      "zoom": 1.07
+    },
+    {
+      "source": "jobs/beauty-days/raw/c05.mp4",
+      "start": 0,
+      "end": 4
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.2,
+      "end": 7.8,
+      "text": "[PLACEHOLDER 1 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 8.2,
+      "end": 12.3,
+      "text": "[PLACEHOLDER 2 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 12.7,
+      "end": 16.8,
+      "text": "[PLACEHOLDER 3 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 17.2,
+      "end": 22.8,
+      "text": "[PLACEHOLDER 4 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 23.2,
+      "end": 28.3,
+      "text": "[PLACEHOLDER 5 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 28.7,
+      "end": 33.8,
+      "text": "[PLACEHOLDER 6 - ტექსტი გადასაწერია]"
+    },
+    {
+      "start": 34.2,
+      "end": 37.8,
+      "text": "[PLACEHOLDER 7 - ტექსტი გადასაწერია]"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 0.0,
+      "end": 2.5,
+      "x": 160,
+      "y": 140,
+      "w": 760,
+      "h": 150,
+      "text": "[HOOK - PLACEHOLDER]",
+      "background": "#5A473E",
+      "color": "#DCC7AA",
+      "size": 56
+    }
+  ],
+  "end_card": {
+    "duration": 3.5,
+    "background": "#29211B",
+    "logo": "brands/verve/logo/wordmark-georgian.png",
+    "logo_tint": "#DCC7AA",
+    "logo_width": 620,
+    "logo_y": 700,
+    "text_y": 1000,
+    "text_color": "#F3F1E9",
+    "lines": [
+      "რუსთავი, ვახუშტის 6",
+      "+995 511 70 73 00",
+      "info@verve-aesthetic.com"
+    ]
+  },
+  "audio": {
+    "loudnorm": -16
+  },
+  "notes": "Blind draft by creative-director (Sonnet). Order/trims chosen from contact sheets only; every cut may fall mid-word. Human must listen, supply transcript/script, confirm order, then replace placeholders. Do not publish automatically."
+}
