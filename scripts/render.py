@@ -1,4 +1,14 @@
-import argparse
+"""Render a JSON edit plan to a 1080x1920 MP4 with FFmpeg and ASS subtitles.
+
+Plan features:
+  segments   list of {start, end, source?, zoom?}; `source` overrides the plan source, `zoom` (e.g. 1.07) punches in
+             to disguise a jump cut between two takes with the same framing
+  captions   list of {start, end, text} on the final timeline; look comes from the brand profile
+  overlays   list of {start, end, x, y, w, h, text, background, color, size}: solid brand-coloured box with centred text
+  end_card   {duration, background, logo, logo_tint, lines, text_color}: brand closing card appended after the segments
+  audio      {loudnorm: -16} normalises loudness of the final mix
+"""
+import argparse, json, shutil, subprocess
 from pathlib import Path
 from common import ROOT, probe, read_json, resolve, require_program, run
 
@@ -9,57 +19,68 @@ a=p.parse_args()
 plan=read_json(a.plan)
 if plan.get('status')!='approved' and not a.preview:
     raise SystemExit('Plan not approved: set status=approved ONLY after a human approves the shot list. Use --preview for a watermarked review copy.')
-source=resolve(plan['source']); output=resolve(plan['output'])
+output=resolve(plan['output'])
 if a.preview: output=output.with_name(output.stem+'-preview'+output.suffix)
-if not source.is_file(): raise SystemExit(f'Source missing: {source}')
-if source.resolve()==output.resolve(): raise SystemExit('Output may not overwrite source')
 segments=plan.get('segments',[])
 if not segments: raise SystemExit('No segments specified')
-info=probe(source)
-if not info['duration']: raise SystemExit('Cannot determine source duration')
-for s in segments:
-    st=float(s['start']); en=float(s['end'])
-    if st<0 or en<=st or en>info['duration']+0.1:
-        raise SystemExit(f'Invalid source time range: {s}')
+require_program('ffmpeg')
 output.parent.mkdir(parents=True,exist_ok=True)
 work=output.parent/'_work';work.mkdir(exist_ok=True)
-require_program('ffmpeg')
-clips=[]
+
+brand={}
+if plan.get('brand_profile') and (ROOT/plan['brand_profile']).exists():
+    brand=json.loads((ROOT/plan['brand_profile']).read_text(encoding='utf-8'))
+
+ENC=['-c:v','libx264','-preset','medium','-crf','19','-pix_fmt','yuv420p']
+AENC=['-c:a','aac','-ar','48000','-ac','2','-b:a','160k']
+
+# ---- 1. cut and conform every segment ----
+clips=[];probed={}
 for i,s in enumerate(segments):
-    st=float(s['start']); duration=float(s['end'])-st
+    source=resolve(s.get('source') or plan['source'])
+    if not source.is_file(): raise SystemExit(f'Source missing: {source}')
+    if source.resolve()==output.resolve(): raise SystemExit('Output may not overwrite source')
+    info=probed.setdefault(source,probe(source))
+    st=float(s['start']); en=float(s['end'])
+    if st<0 or en<=st or en>info['duration']+0.1: raise SystemExit(f'Invalid source time range: {s}')
+    dur=en-st; z=float(s.get('zoom',1.0))
+    if not 1.0<=z<=1.5: raise SystemExit(f'zoom must be between 1.0 and 1.5: {s}')
+    W,H=round(1080*z/2)*2,round(1920*z/2)*2
+    # punch-in keeps the upper part of the frame, where faces usually are
+    vf=f'scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920:(iw-1080)/2:(ih-1920)*0.35,setsar=1,fps=30'
+    fade=min(0.03,dur/4)
+    af=f'afade=t=in:d={fade},afade=t=out:st={dur-fade:.3f}:d={fade}'
     target=work/f'clip_{i:03d}.mp4'
-    cmd=['ffmpeg','-hide_banner','-loglevel','error','-y','-ss',str(st),'-t',str(duration),'-i',str(source)]
-    if not info['has_audio']:
-        cmd+=['-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000']
-    cmd+=['-map','0:v:0','-map','0:a:0' if info['has_audio'] else '1:a:0',
-          '-vf','scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,fps=30',
-          '-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt','yuv420p',
-          '-c:a','aac','-ar','48000','-ac','2','-b:a','128k','-shortest',str(target)]
+    cmd=['ffmpeg','-hide_banner','-loglevel','error','-y','-ss',str(st),'-t',str(dur),'-i',str(source)]
+    if not info['has_audio']: cmd+=['-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000']
+    cmd+=['-map','0:v:0','-map','0:a:0' if info['has_audio'] else '1:a:0','-vf',vf,'-af',af,*ENC,*AENC,'-shortest',str(target)]
     run(cmd); clips.append(target)
+body_duration=sum(probe(c)['duration'] for c in clips)
+
+# ---- 2. optional brand end card ----
+end=plan.get('end_card')
+end_duration=0.0
+if end:
+    end_duration=float(end.get('duration',3.0))
+    logo=resolve(end['logo'])
+    if not logo.is_file(): raise SystemExit(f'End card logo missing: {logo}')
+    bg=end.get('background','#111111').lstrip('#'); tint=end.get('logo_tint','#FFFFFF').lstrip('#')
+    r,g,b=(int(tint[k:k+2],16) for k in (0,2,4))
+    target=work/'clip_end.mp4'
+    fc=(f'[1:v]format=rgba,lutrgb=r={r}:g={g}:b={b},scale={int(end.get("logo_width",620))}:-1:flags=lanczos[lg];'
+        f'[0:v][lg]overlay=(W-w)/2:{int(end.get("logo_y",760))},fade=t=in:d=0.4,format=yuv420p[v]')
+    run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','lavfi','-i',f'color=c=0x{bg}:s=1080x1920:r=30:d={end_duration}',
+         '-loop','1','-t',str(end_duration),'-i',str(logo),'-f','lavfi','-t',str(end_duration),'-i','anullsrc=channel_layout=stereo:sample_rate=48000',
+         '-filter_complex',fc,'-map','[v]','-map','2:a',*ENC,*AENC,'-t',str(end_duration),str(target)])
+    clips.append(target)
+duration=body_duration+end_duration
+
 listfile=work/'concat.txt'
-# temp file paths are internal and from this application, not user input
 listfile.write_text(''.join("file '"+str(x.resolve()).replace("'", "'\\''")+"'\n" for x in clips),encoding='utf-8')
 joined=work/'joined.mp4'
 run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(listfile),'-c','copy',str(joined)])
 
-# ASS supports Georgian when Noto Sans Georgian or other Georgian font is installed.
-
-def _ass_colour(hex_colour, opacity=1.0):
-    h=hex_colour.lstrip('#'); a=round((1-float(opacity))*255)
-    return f'&H{a:02X}{h[4:6]}{h[2:4]}{h[0:2]}'.upper()
-
-def brand_caption_style():
-    # Caption look comes from the brand profile's derived_for_video.caption block; falls back to the neutral default.
-    import json
-    cap={}
-    bp=plan.get('brand_profile')
-    if bp and (ROOT/bp).exists():
-        cap=json.loads((ROOT/bp).read_text(encoding='utf-8')).get('derived_for_video',{}).get('caption',{})
-    font=cap.get('font','Noto Sans Georgian'); size=cap.get('size',62)
-    text=_ass_colour(cap.get('text','#FFFFFF')); box=_ass_colour(cap.get('box','#111111'),cap.get('box_opacity',1.0))
-    bold=0 if 'font' in cap else 1
-    return f'Style: Default,{font},{size},{text},&H000000FF,{box},&H99000000,{bold},0,0,0,100,100,0,0,3,14,0,2,70,70,{cap.get("margin_bottom",250)},1'
-
+# ---- 3. subtitles, overlays, end-card text (ASS) ----
 def ass_time(seconds):
     cs=round(float(seconds)*100)
     h=cs//360000; m=(cs//6000)%60; s=(cs//100)%60; c=cs%100
@@ -68,42 +89,54 @@ def ass_time(seconds):
 def ass_escape(txt):
     return str(txt).replace('\\','\\\\').replace('{','\\{').replace('}','\\}').replace('\n','\\N')
 
-captions=plan.get('captions',[])
-overlays=plan.get('overlays',[])
-if captions or overlays or a.preview:
-    duration=sum(float(x['end'])-float(x['start']) for x in segments)
-    lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','WrapStyle: 0','',
-           '[V4+ Styles]',
-           'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
-           brand_caption_style(),
-           'Style: Overlay,Noto Serif Georgian,100,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1',
-           'Style: Draft,Noto Sans Georgian,30,&H40FFFFFF,&H000000FF,&H80000000,&H00000000,0,0,0,0,100,100,2,0,3,6,0,7,40,40,150,1',
-           '', '[Events]',
-           'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
-    for cap in captions:
-        start=float(cap['start']);end=float(cap['end'])
-        if start<0 or end<=start or end>duration+0.15: raise SystemExit(f'Invalid caption times: {cap}')
-        lines.append(f'Dialogue: 0,{ass_time(start)},{ass_time(end)},Default,,0,0,0,,{ass_escape(cap["text"])}')
-    # overlays: a solid brand-coloured box with centred text, e.g. to replace an off-brand sticker. Coordinates are in the 1080x1920 output frame.
-    for ov in overlays:
-        st,en=ass_time(ov['start']),ass_time(ov['end']); x,y,w,h=(int(ov[k]) for k in ('x','y','w','h'))
-        lines.append(f'Dialogue: 1,{st},{en},Overlay,,0,0,0,,{{\\an7\\pos({x},{y})\\1c{_ass_colour(ov.get("background","#111111"))[4:].join(["&H","&"])}\\p1}}m 0 0 l {w} 0 {w} {h} 0 {h}{{\\p0}}')
-        lines.append(f'Dialogue: 2,{st},{en},Overlay,,0,0,0,,{{\\an5\\pos({x+w//2},{y+h//2})\\fs{int(ov.get("size",100))}\\1c{_ass_colour(ov.get("color","#FFFFFF"))[4:].join(["&H","&"])}}}{ass_escape(ov.get("text",""))}')
-    if a.preview:
-        lines.append(f'Dialogue: 3,{ass_time(0)},{ass_time(duration)},Draft,,0,0,0,,DRAFT · მონახაზი')
-    ass=work/'captions.ass';ass.write_text('\n'.join(lines)+'\n',encoding='utf-8-sig')
-    # ffmpeg ASS filter accepts a local relative filename with no colon or single quote; output directory is safe per project convention.
-    # Run with working directory = work so filter does not need an escaped path.
-    import subprocess, shutil as _sh
-    ass_filter='ass=captions.ass'
-    _fonts=ROOT/'fonts'
-    if _fonts.is_dir():
-        # copy bundled brand fonts next to the subtitle file so the filter needs no absolute (colon-containing) path
-        _sh.copytree(_fonts,work/'fonts',dirs_exist_ok=True); ass_filter+=':fontsdir=fonts'
-    cp=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y', '-i','joined.mp4','-vf',ass_filter,
-            '-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt','yuv420p','-c:a','copy',str(output)],cwd=work)
-    if cp.returncode: raise SystemExit(f'Final ASS render failed: {cp.returncode}')
-else:
-    import shutil
-    shutil.copyfile(joined,output)
+def ass_colour(hex_colour, opacity=1.0):
+    h=hex_colour.lstrip('#'); alpha=round((1-float(opacity))*255)
+    return f'&H{alpha:02X}{h[4:6]}{h[2:4]}{h[0:2]}'.upper()
+
+def inline_colour(hex_colour):
+    h=hex_colour.lstrip('#'); return f'&H{h[4:6]}{h[2:4]}{h[0:2]}&'.upper()
+
+cap=brand.get('derived_for_video',{}).get('caption',{})
+cap_style=(f"Style: Default,{cap.get('font','Noto Sans Georgian')},{cap.get('size',62)},{ass_colour(cap.get('text','#FFFFFF'))},&H000000FF,"
+           f"{ass_colour(cap.get('box','#111111'),cap.get('box_opacity',1.0))},&H99000000,{0 if 'font' in cap else 1},0,0,0,100,100,0,0,3,14,0,2,70,70,{cap.get('margin_bottom',250)},1")
+lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','WrapStyle: 0','',
+       '[V4+ Styles]',
+       'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
+       cap_style,
+       'Style: Overlay,Noto Serif Georgian,100,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1',
+       'Style: EndCard,Noto Sans Georgian,46,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,0,0,5,0,0,0,1',
+       'Style: Draft,Noto Sans Georgian,30,&H40FFFFFF,&H000000FF,&H80000000,&H00000000,0,0,0,0,100,100,2,0,3,6,0,7,40,40,150,1',
+       '', '[Events]',
+       'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
+highlight=inline_colour(cap.get('highlight',cap.get('text','#FFFFFF'))); base=inline_colour(cap.get('text','#FFFFFF'))
+for c in plan.get('captions',[]):
+    start=float(c['start']);finish=float(c['end'])
+    if start<0 or finish<=start or finish>body_duration+0.15: raise SystemExit(f'Invalid caption times: {c}')
+    text=ass_escape(c['text'])
+    # *word* marks a word to show in the brand highlight colour
+    parts=text.split('*')
+    if len(parts)%2==1 and len(parts)>1:
+        text=''.join(pt if k%2==0 else f'{{\\1c{highlight}}}{pt}{{\\1c{base}}}' for k,pt in enumerate(parts))
+    lines.append(f'Dialogue: 0,{ass_time(start)},{ass_time(finish)},Default,,0,0,0,,{text}')
+for ov in plan.get('overlays',[]):
+    st,en=ass_time(ov['start']),ass_time(ov['end']); x,y,w,h=(int(ov[k]) for k in ('x','y','w','h'))
+    lines.append(f'Dialogue: 1,{st},{en},Overlay,,0,0,0,,{{\\an7\\pos({x},{y})\\fad(150,150)\\1c{inline_colour(ov.get("background","#111111"))}\\p1}}m 0 0 l {w} 0 {w} {h} 0 {h}{{\\p0}}')
+    lines.append(f'Dialogue: 2,{st},{en},Overlay,,0,0,0,,{{\\an5\\pos({x+w//2},{y+h//2})\\fad(150,150)\\fs{int(ov.get("size",100))}\\1c{inline_colour(ov.get("color","#FFFFFF"))}}}{ass_escape(ov.get("text",""))}')
+if end:
+    y0=int(end.get('text_y',1080))
+    for k,txt in enumerate(end.get('lines',[])):
+        lines.append(f'Dialogue: 1,{ass_time(body_duration+0.3)},{ass_time(duration)},EndCard,,0,0,0,,{{\\an5\\pos(540,{y0+k*64})\\fad(400,0)\\1c{inline_colour(end.get("text_color","#FFFFFF"))}}}{ass_escape(txt)}')
+if a.preview:
+    lines.append(f'Dialogue: 3,{ass_time(0)},{ass_time(duration)},Draft,,0,0,0,,DRAFT · მონახაზი')
+(work/'captions.ass').write_text('\n'.join(lines)+'\n',encoding='utf-8-sig')
+
+# The ASS filter runs with cwd=work so it needs no absolute path (a Windows drive colon would break the filter string).
+ass_filter='ass=captions.ass'
+if (ROOT/'fonts').is_dir():
+    shutil.copytree(ROOT/'fonts',work/'fonts',dirs_exist_ok=True); ass_filter+=':fontsdir=fonts'
+audio=['-c:a','copy']
+ln=plan.get('audio',{}).get('loudnorm')
+if ln is not None: audio=['-af',f'loudnorm=I={float(ln)}:TP=-1.5:LRA=11',*AENC]
+cp=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i','joined.mp4','-vf',ass_filter,*ENC,*audio,'-movflags','+faststart',str(output)],cwd=work)
+if cp.returncode: raise SystemExit(f'Final render failed: {cp.returncode}')
 print('RENDERED:',output)
