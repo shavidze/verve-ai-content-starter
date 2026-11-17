@@ -1,169 +1,166 @@
 {
- "job": "new-5",
- "version": 2,
- "status": "draft",
- "brand_profile": "brands/verve.json",
- "output": "jobs/new-5/output.mp4",
- "concept": "Offer-first: Mon/Tue 20% laser epilation offer (n02) -> benefit line (n03) -> device (n05+n01, one sentence) -> CTA (n04) -> end card",
- "segments": [
-  {
-   "source": "jobs/new-5/raw/n02.mp4",
-   "start": 2.45,
-   "end": 10.62
-  },
-  {
-   "source": "jobs/new-5/raw/n03.mp4",
-   "start": 1.86,
-   "end": 7.3,
-   "zoom": 1.07
-  },
-  {
-   "source": "jobs/new-5/raw/n05.mp4",
-   "start": 1.8,
-   "end": 7.6
-  },
-  {
-   "source": "jobs/new-5/raw/n01.mp4",
-   "start": 1.66,
-   "end": 5.66,
-   "zoom": 1.07
-  },
-  {
-   "source": "jobs/new-5/raw/n04.mp4",
-   "start": 1.3,
-   "end": 7.3
-  }
- ],
- "captions": [
-  {
-   "start": 0.14,
-   "end": 1.95,
-   "text": "ვერვეში *ორშაბათი* და *სამშაბათი*"
-  },
-  {
-   "start": 1.97,
-   "end": 3.45,
-   "text": "განსაკუთრებული დღეებია"
-  },
-  {
-   "start": 3.47,
-   "end": 5.61,
-   "text": "ამ დღეებში\nლაზერულ ეპილაციაზე"
-  },
-  {
-   "start": 5.63,
-   "end": 8.14,
-   "text": "*20%*-იანი ფასდაკლება\nმოქმედებს"
-  },
-  {
-   "start": 8.3,
-   "end": 10.23,
-   "text": "ისარგებლე სპეციალური\n*ფასდაკლებით*"
-  },
-  {
-   "start": 10.25,
-   "end": 11.85,
-   "text": "და ჩაიტარე\nსასურველი პროცედურა"
-  },
-  {
-   "start": 11.87,
-   "end": 13.58,
-   "text": "უფრო ხელსაყრელ ფასად"
-  },
-  {
-   "start": 13.8,
-   "end": 15.19,
-   "text": "ვერვეში პროცედურა ტარდება"
-  },
-  {
-   "start": 15.21,
-   "end": 17.57,
-   "text": "უახლესი, ორიგინალი\n*იტალიური*"
-  },
-  {
-   "start": 17.59,
-   "end": 19.38,
-   "text": "Reneve Monaco აპარატით"
-  },
-  {
-   "start": 19.49,
-   "end": 20.77,
-   "text": "რომელიც ეფექტურობასთან ერთად"
-  },
-  {
-   "start": 20.79,
-   "end": 23.38,
-   "text": "პროცედურის *კომფორტზეა*\nორიენტირებული"
-  },
-  {
-   "start": 23.55,
-   "end": 24.51,
-   "text": "*მოგვწერე* ახლავე"
-  },
-  {
-   "start": 24.53,
-   "end": 26.39,
-   "text": "გაიგე შენთვის\nსასურველი ზონის"
-  },
-  {
-   "start": 26.41,
-   "end": 27.39,
-   "text": "ფასი ფასდაკლებით"
-  },
-  {
-   "start": 27.41,
-   "end": 29.32,
-   "text": "და *დაჯავშნე ვიზიტი*\nვერვეში"
-  }
- ],
- "overlays": [
-  {
-   "start": 5.4,
-   "end": 8.02,
-   "x": 640,
-   "y": 196,
-   "w": 276,
-   "h": 128,
-   "text": "-20%",
-   "background": "#5A473E",
-   "color": "#DCC7AA",
-   "size": 92
-  }
- ],
- "end_card": {
-  "duration": 3.0,
-  "background": "#29211B",
-  "logo": "brands/verve/logo/wordmark-latin.png",
-  "logo_tint": "#DCC7AA",
-  "logo_width": 620,
-  "logo_y": 700,
-  "text_y": 1060,
-  "text_color": "#F3F1E9",
-  "lines": [
-   "დაჯავშნე ვიზიტი",
-   "+995 511 70 73 00",
-   "რუსთავი, ვახუშტის 6"
+  "job": "new-5",
+  "version": 2,
+  "status": "draft",
+  "brand_profile": "brands/verve.json",
+  "output": "jobs/new-5/output.mp4",
+  "concept": "Offer-first: Mon/Tue 20% laser epilation offer (n02) -> benefit line (n03) -> device (n05+n01, one sentence) -> CTA (n04) -> end card",
+  "segments": [
+    {
+      "source": "jobs/new-5/raw/n02.mp4",
+      "start": 2.45,
+      "end": 10.62
+    },
+    {
+      "source": "jobs/new-5/raw/n03.mp4",
+      "start": 1.86,
+      "end": 7.3,
+      "zoom": 1.07
+    },
+    {
+      "source": "jobs/new-5/raw/n05.mp4",
+      "start": 1.8,
+      "end": 7.6
+    },
+    {
+      "source": "jobs/new-5/raw/n01.mp4",
+      "start": 1.66,
+      "end": 5.66,
+      "zoom": 1.07
+    },
+    {
+      "source": "jobs/new-5/raw/n04.mp4",
+      "start": 1.3,
+      "end": 7.3
+    }
   ],
-  "text_size": 54
- },
- "audio": {
-  "loudnorm": -16
- },
- "needs_review": [
-  "Discount size: caption and badge say 20% (\"20%-იანი ფასდაკლება\") - heard as \"ოციანი\", confirm the exact percentage",
-  "Offer days: Monday and Tuesday (ორშაბათი და სამშაბათი) - confirm days and whether the offer has an end date or conditions",
-  "Offer scope: discount applies to laser epilation (ლაზერულ ეპილაციაზე) - confirm, incl. whether all zones",
-  "Device name: captioned \"Reneve Monaco\". \"RENEVE\" is printed on the handpiece in the footage (supports the brand spelling); the model word \"Monaco\" is only heard, not verified - owner must confirm the exact brand/model name",
-  "Device facts: \"უახლესი\" (newest), \"ორიგინალი\" (original), \"იტალიური\" (Italian) - confirm each is true and provable",
-  "Efficacy wording: \"ეფექტურობასთან ერთად ... კომფორტზეა ორიენტირებული\" is an efficacy/comfort statement - confirm it is acceptable (pilot rule: no unsupported efficacy claims)",
-  "Uncertain words in transcript: \"ეფექტურობასთან ერთად\", \"ორიენტირებული\", \"მოგვწერე\" - listen and confirm captions match the speech",
-  "Cut-ins trimmed to the measured loud onset (n01 starts at 1.60 s, n05 at 1.80 s, n04 at 1.30 s): listen that no first syllable (\"რომელიც\", \"ვერვეში\", \"მოგვწერე\") is clipped",
-  "n04 shows a different prop (wooden stick, branded uniform) than the other clips - confirm this is acceptable in the CTA shot",
-  "End card: phone +995 511 70 73 00 and address რუსთავი, ვახუშტის 6 (from brands/verve.json) - confirm current; CTA line \"დაჯავშნე ვიზიტი\" is taken from the speech",
-  "On-camera person: filming/publishing consent",
-  "Draft uses 5 jump-cut segments from one setup (pilot scope says max 3 distinct shots) - accept or ask for a shorter cut without n03"
- ],
- "caption_style": {
-  "margin_bottom": 1230
- }
+  "captions": [
+    {
+      "start": 0.14,
+      "end": 1.95,
+      "text": "ვერვეში *ორშაბათი* და *სამშაბათი*"
+    },
+    {
+      "start": 1.97,
+      "end": 3.45,
+      "text": "განსაკუთრებული დღეებია"
+    },
+    {
+      "start": 3.47,
+      "end": 5.61,
+      "text": "ამ დღეებში\nლაზერულ ეპილაციაზე"
+    },
+    {
+      "start": 5.63,
+      "end": 8.14,
+      "text": "*20%*-იანი ფასდაკლება\nმოქმედებს"
+    },
+    {
+      "start": 8.3,
+      "end": 10.23,
+      "text": "ისარგებლე სპეციალური\n*ფასდაკლებით*"
+    },
+    {
+      "start": 10.25,
+      "end": 11.85,
+      "text": "და ჩაიტარე\nსასურველი პროცედურა"
+    },
+    {
+      "start": 11.87,
+      "end": 13.58,
+      "text": "უფრო ხელსაყრელ ფასად"
+    },
+    {
+      "start": 13.8,
+      "end": 15.19,
+      "text": "ვერვეში პროცედურა ტარდება"
+    },
+    {
+      "start": 15.21,
+      "end": 17.57,
+      "text": "უახლესი, ორიგინალი\n*იტალიური*"
+    },
+    {
+      "start": 17.59,
+      "end": 19.38,
+      "text": "Reneve Monaco აპარატით"
+    },
+    {
+      "start": 19.49,
+      "end": 20.77,
+      "text": "რომელიც ეფექტურობასთან ერთად"
+    },
+    {
+      "start": 20.79,
+      "end": 23.38,
+      "text": "პროცედურის *კომფორტზეა*\nორიენტირებული"
+    },
+    {
+      "start": 23.55,
+      "end": 24.51,
+      "text": "*მოგვწერე* ახლავე"
+    },
+    {
+      "start": 24.53,
+      "end": 26.39,
+      "text": "გაიგე შენთვის\nსასურველი ზონის"
+    },
+    {
+      "start": 26.41,
+      "end": 27.39,
+      "text": "ფასი ფასდაკლებით"
+    },
+    {
+      "start": 27.41,
+      "end": 29.32,
+      "text": "და *დაჯავშნე ვიზიტი*\nვერვეში"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 5.4,
+      "end": 8.02,
+      "x": 640,
+      "y": 196,
+      "w": 276,
+      "h": 128,
+      "text": "-20%",
+      "background": "#5A473E",
+      "color": "#DCC7AA",
+      "size": 92
+    }
+  ],
+  "end_card": {
+    "duration": 3.0,
+    "background": "#29211B",
+    "logo": "brands/verve/logo/wordmark-latin.png",
+    "logo_tint": "#DCC7AA",
+    "logo_width": 620,
+    "logo_y": 700,
+    "text_y": 1060,
+    "text_color": "#F3F1E9",
+    "lines": [
+      "დაჯავშნე ვიზიტი",
+      "+995 511 70 73 00",
+      "რუსთავი, ვახუშტის 6"
+    ],
+    "text_size": 54
+  },
+  "audio": {
+    "loudnorm": -16
+  },
+  "needs_review": [
+    "Discount size: caption and badge say 20% (\"20%-იანი ფასდაკლება\") - heard as \"ოციანი\", confirm the exact percentage",
+    "Offer days: Monday and Tuesday (ორშაბათი და სამშაბათი) - confirm days and whether the offer has an end date or conditions",
+    "Offer scope: discount applies to laser epilation (ლაზერულ ეპილაციაზე) - confirm, incl. whether all zones",
+    "Device name: captioned \"Reneve Monaco\". \"RENEVE\" is printed on the handpiece in the footage (supports the brand spelling); the model word \"Monaco\" is only heard, not verified - owner must confirm the exact brand/model name",
+    "Device facts: \"უახლესი\" (newest), \"ორიგინალი\" (original), \"იტალიური\" (Italian) - confirm each is true and provable",
+    "Efficacy wording: \"ეფექტურობასთან ერთად ... კომფორტზეა ორიენტირებული\" is an efficacy/comfort statement - confirm it is acceptable (pilot rule: no unsupported efficacy claims)",
+    "Uncertain words in transcript: \"ეფექტურობასთან ერთად\", \"ორიენტირებული\", \"მოგვწერე\" - listen and confirm captions match the speech",
+    "Cut-ins trimmed to the measured loud onset (n01 starts at 1.60 s, n05 at 1.80 s, n04 at 1.30 s): listen that no first syllable (\"რომელიც\", \"ვერვეში\", \"მოგვწერე\") is clipped",
+    "n04 shows a different prop (wooden stick, branded uniform) than the other clips - confirm this is acceptable in the CTA shot",
+    "End card: phone +995 511 70 73 00 and address რუსთავი, ვახუშტის 6 (from brands/verve.json) - confirm current; CTA line \"დაჯავშნე ვიზიტი\" is taken from the speech",
+    "On-camera person: filming/publishing consent",
+    "Draft uses 5 jump-cut segments from one setup (pilot scope says max 3 distinct shots) - accept or ask for a shorter cut without n03"
+  ]
 }

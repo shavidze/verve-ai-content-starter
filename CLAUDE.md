@@ -19,3 +19,6 @@ inspect -> proposed storyboard -> HUMAN PLAN APPROVAL -> render -> technical QA 
 
 ## Pilot scope
 One authorized 15-30 second vertical aesthetic-center Reel, with Georgian captions, one clear hook, maximum three distinct shots, no unsupported efficacy claims.
+
+## Standing owner rules
+- Captions always at the bottom (lower third, above platform UI). Never above the head or at the top. Reviewers must flag top captions as a BLOCKER.
