@@ -4,11 +4,13 @@ from common import ROOT, probe, read_json, resolve, require_program, run
 
 p=argparse.ArgumentParser(description='Render approved JSON plan with FFmpeg and ASS subtitles')
 p.add_argument('plan',help='Path to plan.json')
+p.add_argument('--preview',action='store_true',help='Render a watermarked preview of a draft plan for human review')
 a=p.parse_args()
 plan=read_json(a.plan)
-if plan.get('status')!='approved':
-    raise SystemExit('Plan not approved: set status=approved ONLY after a human approves the shot list.')
+if plan.get('status')!='approved' and not a.preview:
+    raise SystemExit('Plan not approved: set status=approved ONLY after a human approves the shot list. Use --preview for a watermarked review copy.')
 source=resolve(plan['source']); output=resolve(plan['output'])
+if a.preview: output=output.with_name(output.stem+'-preview'+output.suffix)
 if not source.is_file(): raise SystemExit(f'Source missing: {source}')
 if source.resolve()==output.resolve(): raise SystemExit('Output may not overwrite source')
 segments=plan.get('segments',[])
@@ -67,18 +69,28 @@ def ass_escape(txt):
     return str(txt).replace('\\','\\\\').replace('{','\\{').replace('}','\\}').replace('\n','\\N')
 
 captions=plan.get('captions',[])
-if captions:
-    duration=sum(float(s['end'])-float(s['start']) for s in segments)
+overlays=plan.get('overlays',[])
+if captions or overlays or a.preview:
+    duration=sum(float(x['end'])-float(x['start']) for x in segments)
     lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','WrapStyle: 0','',
            '[V4+ Styles]',
            'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
            brand_caption_style(),
+           'Style: Overlay,Noto Serif Georgian,100,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1',
+           'Style: Draft,Noto Sans Georgian,30,&H40FFFFFF,&H000000FF,&H80000000,&H00000000,0,0,0,0,100,100,2,0,3,6,0,7,40,40,150,1',
            '', '[Events]',
            'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
     for cap in captions:
         start=float(cap['start']);end=float(cap['end'])
         if start<0 or end<=start or end>duration+0.15: raise SystemExit(f'Invalid caption times: {cap}')
         lines.append(f'Dialogue: 0,{ass_time(start)},{ass_time(end)},Default,,0,0,0,,{ass_escape(cap["text"])}')
+    # overlays: a solid brand-coloured box with centred text, e.g. to replace an off-brand sticker. Coordinates are in the 1080x1920 output frame.
+    for ov in overlays:
+        st,en=ass_time(ov['start']),ass_time(ov['end']); x,y,w,h=(int(ov[k]) for k in ('x','y','w','h'))
+        lines.append(f'Dialogue: 1,{st},{en},Overlay,,0,0,0,,{{\\an7\\pos({x},{y})\\1c{_ass_colour(ov.get("background","#111111"))[4:].join(["&H","&"])}\\p1}}m 0 0 l {w} 0 {w} {h} 0 {h}{{\\p0}}')
+        lines.append(f'Dialogue: 2,{st},{en},Overlay,,0,0,0,,{{\\an5\\pos({x+w//2},{y+h//2})\\fs{int(ov.get("size",100))}\\1c{_ass_colour(ov.get("color","#FFFFFF"))[4:].join(["&H","&"])}}}{ass_escape(ov.get("text",""))}')
+    if a.preview:
+        lines.append(f'Dialogue: 3,{ass_time(0)},{ass_time(duration)},Draft,,0,0,0,,DRAFT · მონახაზი')
     ass=work/'captions.ass';ass.write_text('\n'.join(lines)+'\n',encoding='utf-8-sig')
     # ffmpeg ASS filter accepts a local relative filename with no colon or single quote; output directory is safe per project convention.
     # Run with working directory = work so filter does not need an escaped path.
