@@ -5,8 +5,9 @@ Plan features:
              to disguise a jump cut between two takes with the same framing
   captions   list of {start, end, text} on the final timeline; look comes from the brand profile
   overlays   list of {start, end, x, y, w, h, text, background, color, size}: solid brand-coloured box with centred text
-  end_card   {duration, background, logo, logo_tint, lines, text_color}: brand closing card appended after the segments
+  end_card   {duration, background, logo, logo_tint, lines, text_color, text_size}: brand closing card appended after the segments
   audio      {loudnorm: -16} normalises loudness of the final mix
+  caption_style  optional per-job override of brand caption fields, e.g. {"margin_bottom": 1230}
 """
 import argparse, json, shutil, subprocess
 from pathlib import Path
@@ -96,7 +97,8 @@ def ass_colour(hex_colour, opacity=1.0):
 def inline_colour(hex_colour):
     h=hex_colour.lstrip('#'); return f'&H{h[4:6]}{h[2:4]}{h[0:2]}&'.upper()
 
-cap=brand.get('derived_for_video',{}).get('caption',{})
+# per-job overrides (e.g. move captions off a prop) without changing the brand profile
+cap={**brand.get('derived_for_video',{}).get('caption',{}),**plan.get('caption_style',{})}
 cap_style=(f"Style: Default,{cap.get('font','Noto Sans Georgian')},{cap.get('size',62)},{ass_colour(cap.get('text','#FFFFFF'))},&H000000FF,"
            f"{ass_colour(cap.get('box','#111111'),cap.get('box_opacity',1.0))},&H99000000,{0 if 'font' in cap else 1},0,0,0,100,100,0,0,3,14,0,2,70,70,{cap.get('margin_bottom',250)},1")
 lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','WrapStyle: 0','',
@@ -104,7 +106,7 @@ lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','W
        'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
        cap_style,
        'Style: Overlay,Noto Serif Georgian,100,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1',
-       'Style: EndCard,Noto Sans Georgian,46,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,0,0,5,0,0,0,1',
+       f'Style: EndCard,Noto Sans Georgian,{int((plan.get("end_card") or {}).get("text_size",46))},&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,1,0,1,0,0,5,0,0,0,1',
        'Style: Draft,Noto Sans Georgian,30,&H40FFFFFF,&H000000FF,&H80000000,&H00000000,0,0,0,0,100,100,2,0,3,6,0,7,40,40,150,1',
        '', '[Events]',
        'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
