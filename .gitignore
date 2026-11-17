@@ -1,0 +1,8 @@
+jobs/*/input.mp4
+jobs/*/output*.mp4
+jobs/*/_work/
+jobs/*/contact.jpg
+jobs/*/quality-report.json
+__pycache__/
+*.pyc
+.env

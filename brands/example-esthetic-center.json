@@ -1,0 +1,37 @@
+{
+  "id": "example-esthetic-center",
+  "display_name": "ესთეტიკური ცენტრი (შეავსე რეალური სახელი)",
+  "audience": "ქალები და კაცები, რომლებიც ესთეტიკურ სერვისებს ეძებენ",
+  "language": "ka",
+  "brand_personality": [
+    "premium",
+    "calm",
+    "credible",
+    "minimal"
+  ],
+  "visual_style": {
+    "accent": "#C9A86C",
+    "background": "#171717",
+    "text": "#FFFFFF",
+    "font_suggestion": "Noto Sans Georgian",
+    "motion": "restrained"
+  },
+  "content_pillars": [
+    "space-and-atmosphere",
+    "educational",
+    "behind-the-scenes",
+    "staff-intro"
+  ],
+  "allowed_claims": [
+    "Only verifiable facts supplied by the center"
+  ],
+  "do_not_claim": [
+    "guaranteed results",
+    "zero risks",
+    "medical treatment advice",
+    "fabricated reviews",
+    "unverified before/after"
+  ],
+  "approval_required": true,
+  "publish_automatically": false
+}
