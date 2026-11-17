@@ -41,6 +41,23 @@ joined=work/'joined.mp4'
 run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(listfile),'-c','copy',str(joined)])
 
 # ASS supports Georgian when Noto Sans Georgian or other Georgian font is installed.
+
+def _ass_colour(hex_colour, opacity=1.0):
+    h=hex_colour.lstrip('#'); a=round((1-float(opacity))*255)
+    return f'&H{a:02X}{h[4:6]}{h[2:4]}{h[0:2]}'.upper()
+
+def brand_caption_style():
+    # Caption look comes from the brand profile's derived_for_video.caption block; falls back to the neutral default.
+    import json
+    cap={}
+    bp=plan.get('brand_profile')
+    if bp and (ROOT/bp).exists():
+        cap=json.loads((ROOT/bp).read_text(encoding='utf-8')).get('derived_for_video',{}).get('caption',{})
+    font=cap.get('font','Noto Sans Georgian'); size=cap.get('size',62)
+    text=_ass_colour(cap.get('text','#FFFFFF')); box=_ass_colour(cap.get('box','#111111'),cap.get('box_opacity',1.0))
+    bold=0 if 'font' in cap else 1
+    return f'Style: Default,{font},{size},{text},&H000000FF,{box},&H99000000,{bold},0,0,0,100,100,0,0,3,14,0,2,70,70,{cap.get("margin_bottom",250)},1'
+
 def ass_time(seconds):
     cs=round(float(seconds)*100)
     h=cs//360000; m=(cs//6000)%60; s=(cs//100)%60; c=cs%100
@@ -55,7 +72,7 @@ if captions:
     lines=['[Script Info]','ScriptType: v4.00+','PlayResX: 1080','PlayResY: 1920','WrapStyle: 0','',
            '[V4+ Styles]',
            'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
-           'Style: Default,Noto Sans Georgian,62,&H00FFFFFF,&H000000FF,&H00111111,&H99000000,1,0,0,0,100,100,0,0,3,3,0,2,70,70,250,1',
+           brand_caption_style(),
            '', '[Events]',
            'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text']
     for cap in captions:
@@ -65,8 +82,13 @@ if captions:
     ass=work/'captions.ass';ass.write_text('\n'.join(lines)+'\n',encoding='utf-8-sig')
     # ffmpeg ASS filter accepts a local relative filename with no colon or single quote; output directory is safe per project convention.
     # Run with working directory = work so filter does not need an escaped path.
-    import subprocess
-    cp=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y', '-i','joined.mp4','-vf','ass=captions.ass',
+    import subprocess, shutil as _sh
+    ass_filter='ass=captions.ass'
+    _fonts=ROOT/'fonts'
+    if _fonts.is_dir():
+        # copy bundled brand fonts next to the subtitle file so the filter needs no absolute (colon-containing) path
+        _sh.copytree(_fonts,work/'fonts',dirs_exist_ok=True); ass_filter+=':fontsdir=fonts'
+    cp=subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y', '-i','joined.mp4','-vf',ass_filter,
             '-c:v','libx264','-preset','veryfast','-crf','22','-pix_fmt','yuv420p','-c:a','copy',str(output)],cwd=work)
     if cp.returncode: raise SystemExit(f'Final ASS render failed: {cp.returncode}')
 else:

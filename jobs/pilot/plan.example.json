@@ -1,7 +1,7 @@
 {
   "status": "draft",
   "approval_note": "Needs actual human review and recorded approval before changing status.",
-  "brand_profile": "brands/example-esthetic-center.json",
+  "brand_profile": "brands/verve.json",
   "source": "jobs/pilot/input.mp4",
   "output": "jobs/pilot/output.mp4",
   "segments": [
